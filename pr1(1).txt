@@ -1,0 +1,64 @@
+Water jug problem :
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX 1000
+
+typedef struct {
+    int a, b;
+} State;
+
+bool visited[100][100];
+
+void waterJug(int x, int y, int target) {
+    State queue[MAX];
+    int front = 0, rear = 0;
+
+    queue[rear++] = (State){0, 0};
+    visited[0][0] = true;
+
+    while (front < rear) {
+        State curr = queue[front++];
+        int a = curr.a, b = curr.b;
+
+        printf("(%d, %d)\n", a, b);
+
+        if (a == target || b == target) {
+            printf("Target reached!\n");
+            return;
+        }
+
+        // Possible operations
+        State nextStates[] = {
+            {x, b},        // Fill jug1
+            {a, y},        // Fill jug2
+            {0, b},        // Empty jug1
+            {a, 0},        // Empty jug2
+            // Pour jug1 -> jug2
+            {a - (y - b < a ? y - b : a), b + (y - b < a ? y - b : a)},
+            // Pour jug2 -> jug1
+            {a + (x - a < b ? x - a : b), b - (x - a < b ? x - a : b)}
+        };
+
+        for (int i = 0; i < 6; i++) {
+            int na = nextStates[i].a;
+            int nb = nextStates[i].b;
+
+            if (na >= 0 && nb >= 0 && na <= x && nb <= y && !visited[na][nb]) {
+                visited[na][nb] = true;
+                queue[rear++] = (State){na, nb};
+            }
+        }
+    }
+
+    printf("Solution not possible\n");
+}
+
+int main() {
+    int x = 4, y = 3, target = 2;
+
+    waterJug(x, y, target);
+
+    return 0;
+}

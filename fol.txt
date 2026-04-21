@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX 20
+#define LEN 50
+
+char clauses[MAX][LEN];
+int n;
+
+// function to check complementary literals
+int isComplementary(char *a, char *b) {
+    if (a[0] == '~' && strcmp(a + 1, b) == 0)
+        return 1;
+    if (b[0] == '~' && strcmp(b + 1, a) == 0)
+        return 1;
+    return 0;
+}
+
+// function to resolve two clauses
+int resolve(char *c1, char *c2, char *result) {
+    char temp1[LEN], temp2[LEN];
+    strcpy(temp1, c1);
+    strcpy(temp2, c2);
+
+    char *tok1 = strtok(temp1, " v ");
+    while (tok1 != NULL) {
+        char tempTok2[LEN];
+        strcpy(tempTok2, c2);
+        char *tok2 = strtok(tempTok2, " v ");
+
+        while (tok2 != NULL) {
+            if (isComplementary(tok1, tok2)) {
+                // build new clause
+                strcpy(result, "");
+
+                char t1[LEN], t2[LEN];
+                strcpy(t1, c1);
+                strcpy(t2, c2);
+
+                char *p = strtok(t1, " v ");
+                while (p != NULL) {
+                    if (strcmp(p, tok1) != 0) {
+                        strcat(result, p);
+                        strcat(result, " v ");
+                    }
+                    p = strtok(NULL, " v ");
+                }
+
+                p = strtok(t2, " v ");
+                while (p != NULL) {
+                    if (strcmp(p, tok2) != 0) {
+                        strcat(result, p);
+                        strcat(result, " v ");
+                    }
+                    p = strtok(NULL, " v ");
+                }
+
+                // remove last " v "
+                int len = strlen(result);
+                if (len >= 3)
+                    result[len - 3] = '\0';
+
+                return 1;
+            }
+            tok2 = strtok(NULL, " v ");
+        }
+        tok1 = strtok(NULL, " v ");
+    }
+    return 0;
+}
+
+void resolution() {
+    char newClause[LEN];
+
+    printf("\n--- Resolution Steps (Tree) ---\n");
+
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (resolve(clauses[i], clauses[j], newClause)) {
+
+                printf("Resolve (%s) and (%s) => %s\n",
+                       clauses[i], clauses[j], newClause);
+
+                if (strlen(newClause) == 0) {
+                    printf("\nDerived EMPTY CLAUSE\n");
+                    printf("Contradiction Found! (Proof Successful)\n");
+                    return;
+                }
+
+                strcpy(clauses[n++], newClause);
+            }
+        }
+    }
+
+    printf("\nNo contradiction found.\n");
+}
+
+int main() {
+    printf("Enter number of clauses: ");
+    scanf("%d", &n);
+    getchar();
+
+    printf("Enter clauses (use ~ for NOT, v for OR):\n");
+    for (int i = 0; i < n; i++) {
+        fgets(clauses[i], LEN, stdin);
+        clauses[i][strcspn(clauses[i], "\n")] = 0;
+    }
+
+    resolution();
+
+    return 0;
+}

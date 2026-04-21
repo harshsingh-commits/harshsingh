@@ -1,0 +1,87 @@
+Strurture planning practical 8 
+#include <stdio.h>
+#include <string.h>
+
+#define MAX 10
+
+char stack[MAX][30];
+int top = -1;
+
+void push(char *s) {
+    strcpy(stack[++top], s);
+}
+
+void pop() {
+    if (top >= 0) top--;
+}
+
+int main() {
+    printf("Goal: Spare tire on axle\n\n");
+
+    // Initial Goal
+    push("ON(spare, axle)");
+
+    while (top != -1) {
+        char current[30];
+        strcpy(current, stack[top]);
+
+        printf("Processing: %s\n", current);
+
+        // If already satisfied
+        if (strcmp(current, "AT(flat, axle)") == 0 ||
+            strcmp(current, "AT(spare, trunk)") == 0) {
+
+            printf("%s already satisfied\n\n", current);
+            pop();
+        }
+
+        // Goal decomposition
+        else if (strcmp(current, "ON(spare, axle)") == 0) {
+            pop();
+            push("PUTON(spare, axle)");
+            push("CLEAR(axle)");
+            push("HAVE(spare)");
+            printf("Decomposing goal ON(spare, axle)\n\n");
+        }
+
+        // Get spare from trunk
+        else if (strcmp(current, "HAVE(spare)") == 0) {
+            pop();
+            push("REMOVE(spare, trunk)");
+            push("AT(spare, trunk)");
+            printf("Getting spare from trunk\n\n");
+        }
+
+        // Clear axle (remove flat tire)
+        else if (strcmp(current, "CLEAR(axle)") == 0) {
+            pop();
+            push("REMOVE(flat, axle)");
+            push("AT(flat, axle)");
+            printf("Clearing axle (removing flat tire)\n\n");
+        }
+
+        // Actions
+        else if (strcmp(current, "REMOVE(spare, trunk)") == 0) {
+            printf("Action: Remove spare from trunk\n\n");
+            pop();
+        }
+
+        else if (strcmp(current, "REMOVE(flat, axle)") == 0) {
+            printf("Action: Remove flat tire from axle\n\n");
+            pop();
+        }
+
+        else if (strcmp(current, "PUTON(spare, axle)") == 0) {
+            printf("Action: Put spare tire on axle\n\n");
+            pop();
+        }
+
+        else {
+            pop();
+        }
+    }
+
+    printf("Goal Achieved: Spare tire mounted successfully!\n");
+
+    return 0;
+}

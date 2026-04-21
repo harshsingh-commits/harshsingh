@@ -1,0 +1,36 @@
+#include <stdio.h>
+
+int main() {
+    int fever, cough, headache;
+
+    printf("Rule-Based Expert System (Disease Diagnosis)\n");
+
+    printf("Do you have fever? (1-Yes / 0-No): ");
+    scanf("%d", &fever);
+
+    printf("Do you have cough? (1-Yes / 0-No): ");
+    scanf("%d", &cough);
+
+    printf("Do you have headache? (1-Yes / 0-No): ");
+    scanf("%d", &headache);
+
+    printf("\nDiagnosis:\n");
+
+    // Rules
+    if (fever && cough && headache) {
+        printf("You may have Flu\n");
+    }
+    else if (fever && cough) {
+        printf("You may have Cold\n");
+    }
+    else if (fever && headache) {
+        printf("You may have Viral Infection\n");
+    }
+    else {
+        printf("No major disease detected\n");
+    }
+
+    return 0;
+}
+
+

@@ -1,0 +1,25 @@
+#include <stdio.h>
+
+// Function to calculate P(Disease | Positive Test) using Bayes Theorem
+float bayes(float pDisease, float pPosGivenDisease, float pPosGivenNoDisease) {
+    float pNoDisease = 1 - pDisease;
+
+    float numerator = pPosGivenDisease * pDisease;
+    float denominator = numerator + (pPosGivenNoDisease * pNoDisease);
+
+    return numerator / denominator;
+}
+
+int main() {
+    // Given probabilities
+    float pDisease = 0.01;              // P(D)
+    float pPosGivenDisease = 0.99;      // P(Pos | D)
+    float pPosGivenNoDisease = 0.05;    // P(Pos | ~D)
+
+    float result = bayes(pDisease, pPosGivenDisease, pPosGivenNoDisease);
+
+    printf("Belief Network Inference:\n");
+    printf("P(Disease | Positive Test) = %.4f\n", result);
+
+    return 0;
+}
